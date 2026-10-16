@@ -2,11 +2,16 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+
+import catalogue from '@/lib/services'
 
 const services = [
-  { href: '/security', label: 'Security Guard Services' },
-  { href: '/housekeeping', label: 'Housekeeping Services' },
+  { href: '/services', label: 'All services' },
+  ...catalogue.map((service) => ({
+    href: `/services/${service.slug}`,
+    label: service.name
+  })),
   { href: '/gardening', label: 'Gardening Services' }
 ]
 
@@ -31,7 +36,9 @@ export default function Chrome({ children }) {
   const [open, setOpen] = useState(false)
   const [drop, setDrop] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [hidden, setHidden] = useState(false)
   const [progress, setProgress] = useState(0)
+  const lastY = useRef(0)
   const serviceActive = services.some((item) => item.href === pathname)
 
   useEffect(() => {
@@ -51,9 +58,12 @@ export default function Chrome({ children }) {
 
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 8)
+      const y = window.scrollY
+      setScrolled(y > 8)
+      setHidden(y > lastY.current && y > 90)
+      lastY.current = y
       const height = document.documentElement.scrollHeight - window.innerHeight
-      setProgress(height > 0 ? window.scrollY / height : 0)
+      setProgress(height > 0 ? y / height : 0)
     }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -63,7 +73,7 @@ export default function Chrome({ children }) {
   return (
     <>
       <div className="progress" style={{ transform: `scaleX(${progress})` }} aria-hidden="true" />
-      <div className="boot" aria-hidden="true"><img src="/images/logo.png" alt="" /></div>
+      <div className="boot" aria-hidden="true"><img src="/images/logo-on-dark.png" alt="" /></div>
       <a className="skip" href="#main">Skip to content</a>
 
       <div className="topbar">
@@ -76,9 +86,12 @@ export default function Chrome({ children }) {
         </div>
       </div>
 
-      <header className={`header${scrolled ? ' scrolled' : ''}`}>
+      <header className={`header${scrolled ? ' scrolled' : ''}${hidden && !open ? ' is-hidden' : ''}`}>
         <div className="wrap">
-          <Link className="logo" href="/"><img src="/images/logo.png" alt="EMG Security Services LLC" /></Link>
+          <Link className="logo" href="/">
+            <img className="for-light" src="/images/logo.png" alt="EMG Security Services LLC" />
+            <img className="for-dark" src="/images/logo-on-dark.png" alt="" />
+          </Link>
           <button className="burger" aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} onClick={() => setOpen((value) => !value)}>
             <span /><span /><span />
           </button>
@@ -108,17 +121,21 @@ export default function Chrome({ children }) {
       <footer className="footer">
         <div className="wrap foot-grid">
           <div>
-            <Link className="logo" href="/"><img src="/images/logo.png" alt="EMG Security Services LLC" /></Link>
+            <Link className="logo" href="/"><img src="/images/logo-on-dark.png" alt="EMG Security Services LLC" /></Link>
             <p>EMG is a facility management, security, consulting, and staffing provider established in the United Arab Emirates.</p>
           </div>
           <div>
             <h3>Services</h3>
-            {services.map((item) => <Link key={item.href} href={item.href}>{item.label}</Link>)}
+            {catalogue.slice(0, 5).map((service) => (
+              <Link key={service.name} href={`/services/${service.slug}`}>{service.name}</Link>
+            ))}
+            <Link className="view-services" href="/services">View services <span className="arrow">→</span></Link>
           </div>
           <div>
             <h3>Pages</h3>
             <Link href="/">Home</Link>
             <Link href="/about">About Us</Link>
+            <Link href="/services">Our Services</Link>
             <Link href="/contact">Contact Us</Link>
           </div>
           <div>

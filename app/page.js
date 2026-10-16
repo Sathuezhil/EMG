@@ -1,40 +1,18 @@
 import Link from 'next/link'
 import { Fragment } from 'react'
+import services from '@/lib/services'
 import CountUp from '@/components/CountUp'
 import Meters from '@/components/Meters'
 import QuoteForm from '@/components/QuoteForm'
 import Reveal from '@/components/Reveal'
-import SvcCard from '@/components/SvcCard'
+import HeroSlider from '@/components/HeroSlider'
 
 const ticker = ['Security guards', 'Housekeeping', 'Gardening', 'MEP services', 'Skilled staffing', 'ISO 9001', 'ISO 27001']
 
 export default function HomePage() {
   return (
     <>
-      <section className="hero hero-center">
-        <div className="hero-bg"><img src="/images/hero.jpg" alt="Dubai skyline" /></div>
-        <div className="hero-shade" />
-        <div className="wrap hero-copy">
-          <p className="eyebrow"><span className="dot" /> EMG operations · Dubai</p>
-          <h1>
-            <span className="line"><span>Welcome to</span></span>
-            <span className="line"><span>EMG Security <em>Services</em></span></span>
-          </h1>
-          <p className="lede">A single system for guarding, housekeeping, and grounds — trained people, live supervision, and a clear standard on every site across the UAE.</p>
-          <div className="hero-actions">
-            <Link className="btn btn-red" href="/contact">Get quotation <span className="arrow">→</span></Link>
-            <a className="btn btn-ghost" href="#services">View services</a>
-          </div>
-        </div>
-        <div className="hero-dock">
-          <div className="wrap dock-row">
-            <span><i className="live" /> Coverage live</span>
-            <span>24/7 response</span>
-            <span>4 ISO standards</span>
-            <span>Security · Housekeeping · Gardening</span>
-          </div>
-        </div>
-      </section>
+      <HeroSlider />
 
       <div className="marquee" aria-hidden="true">
         <div className="marquee-track">
@@ -49,7 +27,7 @@ export default function HomePage() {
 
       <section className="section">
         <div className="wrap">
-          <Reveal className="section-head">
+          <Reveal className="section-head" from="left">
             <p className="eyebrow dark">The EMG system</p>
             <h2>One desk for the whole property.</h2>
             <p>Guarding, cleaning, and landscaping run as one operation — the same way a control room watches a building, only the work happens on the ground.</p>
@@ -76,7 +54,7 @@ export default function HomePage() {
           <Reveal className="frame">
             <img src="/images/lobby.jpg" alt="A maintained commercial lobby" />
           </Reveal>
-          <Reveal delay={0.12}>
+          <Reveal delay={0.12} from="left">
             <p className="eyebrow dark">EMG Security Services LLC</p>
             <h2>People, places, and the work that keeps them running.</h2>
             <p className="muted">EMG is a young and dynamic facility management, security, consulting, and staffing provider with a global perspective, established in the United Arab Emirates. The company is SA 8000:2014, ISO 27001:2013, ISO 26000:2010, and ISO 9001:2015 certified.</p>
@@ -91,53 +69,24 @@ export default function HomePage() {
 
       <section className="section band" id="services">
         <div className="wrap">
-          <Reveal className="section-head">
-            <p className="eyebrow dark">Services we provide</p>
-            <h2>Three crews. One standard of care.</h2>
-            <p>From the gate to the garden, EMG looks after the parts of a property people notice every day.</p>
-          </Reveal>
-          <div className="svc-layout">
-            <SvcCard href="/security" className="svc svc-feature">
-              <img src="/images/security.jpg" alt="Security monitoring" />
-              <div className="svc-body">
-                <small>01 — Protection</small>
-                <h3>Security services</h3>
-                <p>Reliable guard services that protect people, property, and assets with integrity and discipline.</p>
-                <span className="more">Explore security</span>
-              </div>
-            </SvcCard>
-            <div className="svc-stack">
-              <SvcCard href="/housekeeping" className="svc" delay={0.1}>
-                <img src="/images/housekeeping.jpg" alt="Professional housekeeping" />
-                <div className="svc-body">
-                  <small>02 — Care</small>
-                  <h3>Housekeeping</h3>
-                  <p>Spotless, hygienic premises for offices, homes, and hospitality.</p>
-                </div>
-              </SvcCard>
-              <SvcCard href="/gardening" className="svc" delay={0.18}>
-                <img src="/images/garden.jpg" alt="Garden maintenance" />
-                <div className="svc-body">
-                  <small>03 — Landscape</small>
-                  <h3>Gardening</h3>
-                  <p>Healthy outdoor spaces that hold up in the UAE climate.</p>
-                </div>
-              </SvcCard>
-            </div>
+          <div className="home-services-head">
+            <Reveal className="section-head" from="left">
+              <p className="eyebrow dark">Services we provide</p>
+              <h2>Security, facilities, and cleaning.</h2>
+              <p>A short look at the work. The full list sits on one page.</p>
+            </Reveal>
+            <Link className="view-services" href="/services">View all services <span className="arrow">→</span></Link>
           </div>
-          <div className="more-row">
-            <Reveal className="cap">
-              <Link href="/contact?service=MEP%20Services">
-                <strong>MEP services</strong>
-                <span>Maintenance support that keeps building systems dependable.</span>
+          <div className="service-board">
+            {services.slice(0, 6).map((service) => (
+              <Link className="service-tile" href={`/services/${service.slug}`} key={service.slug}>
+                <img src={service.image} alt="" />
+                <span>
+                  <strong>{service.name}</strong>
+                  <em>View <i>→</i></em>
+                </span>
               </Link>
-            </Reveal>
-            <Reveal className="cap" delay={0.1}>
-              <Link href="/contact?service=Skilled%20%26%20Semi-Skilled%20Staffing">
-                <strong>Skilled &amp; semi-skilled staffing</strong>
-                <span>People placed to match the site, the shift, and the standard.</span>
-              </Link>
-            </Reveal>
+            ))}
           </div>
         </div>
       </section>

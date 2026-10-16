@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import services from '@/lib/services'
 
 const options = [
-  'Security Guard Services',
-  'Housekeeping Services',
+  ...services.map((service) => service.name),
   'Gardening Services',
   'MEP Services',
   'Skilled & Semi-Skilled Staffing'
